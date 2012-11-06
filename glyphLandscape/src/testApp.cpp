@@ -6,8 +6,8 @@ void testApp::setup(){
     ofEnableAlphaBlending();
     ofEnableSmoothing();
     
-    width = 300;
-    height = 800;
+    width = 1500;
+    height = 400;
     
     ofSetWindowShape(width, height);
     
@@ -85,12 +85,13 @@ void testApp::draw(){
     //
     cam.begin();
     ofPushMatrix();
+    ofRotate(-70,1.0,0.0,0.0);
     ofScale(zoom,zoom);
     ofRotate(ofRadToDeg(angle), 0, 0, 1);
     ofTranslate(cameraFocus.pos*-1.0);
     
-    glyph.draw();
-    ofTranslate(0, 0,-1);
+    //glyph.draw();
+    //ofTranslate(0, 0,-1);
     ofSetColor(255);
 //    light.enable();
     terrain.draw();

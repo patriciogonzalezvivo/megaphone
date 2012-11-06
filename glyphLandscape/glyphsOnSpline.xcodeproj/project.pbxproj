@@ -15,8 +15,6 @@
 		3D8144C0164436CE0087371D /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D8144BA164436CE0087371D /* tinyxmlparser.cpp */; };
 		3D8144C1164436CE0087371D /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D8144BC164436CE0087371D /* ofxXmlSettings.cpp */; };
 		3D877BC71645B5EE006384C5 /* ThresholdBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877BC51645B5ED006384C5 /* ThresholdBar.cpp */; };
-		3D877BDF16462C2E006384C5 /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877BD916462C2E006384C5 /* Delaunay.cpp */; };
-		3D877BE016462C2E006384C5 /* ofxDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877BDD16462C2E006384C5 /* ofxDelaunay.cpp */; };
 		3D877BF316471311006384C5 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877BF116471311006384C5 /* Particle.cpp */; };
 		3D877BF616471490006384C5 /* SuperGlyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877BF416471490006384C5 /* SuperGlyph.cpp */; };
 		3D877CB9164714C9006384C5 /* ofxFlocking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D877C82164714C8006384C5 /* ofxFlocking.cpp */; };
@@ -91,11 +89,6 @@
 		3D8144BD164436CE0087371D /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		3D877BC51645B5ED006384C5 /* ThresholdBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThresholdBar.cpp; sourceTree = "<group>"; };
 		3D877BC61645B5ED006384C5 /* ThresholdBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThresholdBar.h; sourceTree = "<group>"; };
-		3D877BD916462C2E006384C5 /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delaunay.cpp; sourceTree = "<group>"; };
-		3D877BDA16462C2E006384C5 /* Delaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delaunay.h; sourceTree = "<group>"; };
-		3D877BDB16462C2E006384C5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		3D877BDD16462C2E006384C5 /* ofxDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDelaunay.cpp; sourceTree = "<group>"; };
-		3D877BDE16462C2E006384C5 /* ofxDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDelaunay.h; sourceTree = "<group>"; };
 		3D877BF116471311006384C5 /* Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
 		3D877BF216471311006384C5 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Particle.h; sourceTree = "<group>"; };
 		3D877BF416471490006384C5 /* SuperGlyph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuperGlyph.cpp; sourceTree = "<group>"; };
@@ -231,43 +224,6 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		3D877BD616462C2E006384C5 /* ofxDelaunay */ = {
-			isa = PBXGroup;
-			children = (
-				3D877BD716462C2E006384C5 /* libs */,
-				3D877BDB16462C2E006384C5 /* README.md */,
-				3D877BDC16462C2E006384C5 /* src */,
-			);
-			name = ofxDelaunay;
-			path = ../../../addons/ofxDelaunay;
-			sourceTree = "<group>";
-		};
-		3D877BD716462C2E006384C5 /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				3D877BD816462C2E006384C5 /* Delaunay */,
-			);
-			path = libs;
-			sourceTree = "<group>";
-		};
-		3D877BD816462C2E006384C5 /* Delaunay */ = {
-			isa = PBXGroup;
-			children = (
-				3D877BD916462C2E006384C5 /* Delaunay.cpp */,
-				3D877BDA16462C2E006384C5 /* Delaunay.h */,
-			);
-			path = Delaunay;
-			sourceTree = "<group>";
-		};
-		3D877BDC16462C2E006384C5 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				3D877BDD16462C2E006384C5 /* ofxDelaunay.cpp */,
-				3D877BDE16462C2E006384C5 /* ofxDelaunay.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
 		3D877BF7164714C8006384C5 /* ofxFX */ = {
 			isa = PBXGroup;
 			children = (
@@ -378,7 +334,6 @@
 			isa = PBXGroup;
 			children = (
 				3D877BF7164714C8006384C5 /* ofxFX */,
-				3D877BD616462C2E006384C5 /* ofxDelaunay */,
 				3D8144B5164436CE0087371D /* ofxXmlSettings */,
 			);
 			name = addons;
@@ -568,8 +523,6 @@
 				3D8144C0164436CE0087371D /* tinyxmlparser.cpp in Sources */,
 				3D8144C1164436CE0087371D /* ofxXmlSettings.cpp in Sources */,
 				3D877BC71645B5EE006384C5 /* ThresholdBar.cpp in Sources */,
-				3D877BDF16462C2E006384C5 /* Delaunay.cpp in Sources */,
-				3D877BE016462C2E006384C5 /* ofxDelaunay.cpp in Sources */,
 				3D877BF316471311006384C5 /* Particle.cpp in Sources */,
 				3D877BF616471490006384C5 /* SuperGlyph.cpp in Sources */,
 				3D877CB9164714C9006384C5 /* ofxFlocking.cpp in Sources */,

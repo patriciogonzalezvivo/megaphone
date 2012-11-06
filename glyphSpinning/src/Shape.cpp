@@ -65,13 +65,14 @@ void Shape::update(){
     
     for (int i = 0; i < stringDots.size(); i++){
         
-        float radius = pct * 200;
+        float radius = pct * 100;
         float angle = ofGetElapsedTimef() * (1 + i / 20.0);
         
         float x = stringDots[i].origin.x + radius * cos(angle* 0.9);    //  We move the points to spin round the
         float y = stringDots[i].origin.y + radius * -sin(angle* 0.8);   //  default position
+        float z = stringDots[i].origin.z + radius * sin(angle* 0.8);   //  default position
         
-        stringDots[i].moveTo(x, y);
+        stringDots[i].moveTo(x,y,z);
     }
 }
 

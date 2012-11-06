@@ -17,7 +17,7 @@ public:
     wParticle();
     
     void set(ofPoint _pos);
-    void moveTo(float _x, float _y);
+    void moveTo(float _x, float _y, float _z);
     
     void drawTrail(ofFloatColor _color);
     

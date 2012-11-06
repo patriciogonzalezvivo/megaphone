@@ -17,7 +17,7 @@ void wParticle::set(ofPoint _pos){
     y = origin.y = _pos.y;
 }
 
-void wParticle::moveTo(float _x, float _y){
+void wParticle::moveTo(float _x, float _y, float _z){
     
     //  It doesn't just move, it also record the position in order
     //  to make a trail
@@ -25,6 +25,7 @@ void wParticle::moveTo(float _x, float _y){
     ofPoint temp;
     x = temp.x = _x;
     y = temp.y = _y;
+    z = temp.z = _z;
     
 	points.push_back(temp);
     
