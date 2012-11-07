@@ -8,6 +8,7 @@
 
 #include "Page.h"
 
+float offsetAmount;
 float twirlAmount;
 float tiltAmount;
 float flipAmount;
@@ -22,10 +23,13 @@ float speedAmount;
 float expandAmount;
 float liftAmount;
 
+float Page::sharedFlipAngle = 0;
+int Page::sharedLastFlipFrame = 0;
+
 //--------------------------------------------------------------
 Page::Page()
 {
-    animateDuration = ofRandom(10);
+    animateOffset = ofRandom(50);
 
     bGoingUp = true;
     startPos.set(0, 20, 0);
@@ -37,6 +41,8 @@ Page::Page()
 
     twirlAngle = 0;
     tiltAngle = 0;
+    
+    localFlipAngle = 0;
     flipAngle = 0;
 
     vertAngle = 0;
@@ -118,34 +124,38 @@ void Page::rebuild(float bendTopPct, float bendBottomPct)
 //--------------------------------------------------------------
 void Page::update()
 {
-    ++animateDuration;
+    animateCounter = ofGetFrameNum() + animateOffset * offsetAmount;
 
-    rotInc = sin(animateDuration * 0.1);
+    rotInc = sin(animateCounter * 0.1);
 
-    // twirl, tilt, and flip around
-    if (twirlAmount > 0) {
-        twirlAngle += rotInc * twirlAmount;
-    }
-    else if (twirlAngle > 0) {
-        while (twirlAngle > M_TWO_PI) twirlAngle -= M_TWO_PI;
-        twirlAngle -= MAX(rotInc, 0.02);
-    }
-    else {
-        twirlAngle = 0;
-    }
-
+    // twirl and tilt
+    twirlAngle = rotInc * 5 * twirlAmount;
     tiltAngle = sin(rotInc * 0.01) * 100 * tiltAmount;
 
+    // flip around, always in the same direction
     if (flipAmount > 0) {
-        flipAngle += MAX(rotInc, 0.02) * flipAmount;
-    }
-    else if (flipAngle > 0) {
-        while (flipAngle > M_TWO_PI) flipAngle -= M_TWO_PI;
-        flipAngle -= MAX(rotInc, 0.02);
+        localFlipAngle += MAX(rotInc, 0.02) * flipAmount;
     }
     else {
-        flipAngle = 0;
+        if (localFlipAngle != 0) {
+            while (localFlipAngle > M_TWO_PI) localFlipAngle -= M_TWO_PI;
+            if (localFlipAngle + 0.2 < M_TWO_PI) {
+                localFlipAngle += 0.2;
+            }
+            else {
+                localFlipAngle = 0;
+            }
+        }
     }
+
+    // flip the global value if it hasn't already been set this frame
+    if (sharedLastFlipFrame < ofGetFrameNum()) {
+        sharedFlipAngle = localFlipAngle;
+        sharedLastFlipFrame = ofGetFrameNum();
+    }
+
+    // sync the flips...
+    flipAngle = ofLerp(sharedFlipAngle, localFlipAngle, offsetAmount);
 
     // sway back and forth
     swayInc += swaySpeed;
@@ -156,16 +166,16 @@ void Page::update()
 
     if (bendTail) {
         // bend the bottom of the page
-        vertBendPct = sin(animateDuration * 0.1) * bottomBendAmount;
+        vertBendPct = sin(animateCounter * 0.1) * bottomBendAmount;
     }
     else if (bendWings) {
         // bend more 
-        topBendPct = sin(animateDuration * 0.1) * topBendAmount;
-        bottomBendPct = sin(animateDuration * 0.1) * bottomBendAmount;
+        topBendPct = sin(animateCounter * 0.1) * topBendAmount;
+        bottomBendPct = sin(animateCounter * 0.1) * bottomBendAmount;
     }
     else if (bendFresh) {
         // funky fresh bending
-        topBendPct = sin(animateDuration * 0.1) * topBendAmount;
+        topBendPct = sin(animateCounter * 0.1) * topBendAmount;
         bottomBendPct = -rotInc * 2 * bottomBendAmount;
     }
 
@@ -186,13 +196,15 @@ void Page::update()
             tornadoOffset *= (pos.y * 0.1);
 
             if (bGoingUp) {
-                tornadoOffset.y += tornadoAngle;
+                // ease up the angle
+                tornadoOffset.y += ofMap(pos.y, startPos.y, startPos.y + 10, tornadoAngle / 10, tornadoAngle, true);
                 if (tornadoRadius >= groundSize) {
                     bGoingUp = false;
                 }
             }
             else {
-                tornadoOffset.y -= tornadoAngle;
+                // ease down the angle
+                tornadoOffset.y -= ofMap(pos.y, startPos.y + 10, startPos.y, tornadoAngle, tornadoAngle / 10, true);
                 tornadoOffset -= (posFromCenter * 0.01);
                 if (tornadoRadius < startPos.y) {
                     bGoingUp = true;
