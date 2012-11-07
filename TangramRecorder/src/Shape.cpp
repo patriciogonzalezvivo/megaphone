@@ -16,9 +16,9 @@ Shape::Shape(){
     rotationY = 0.0;
     rotationZ = 0.0;
     
-    rotationTargetX = 0.0;
-    rotationTargetY = 0.0;
-    rotationTargetZ = 0.0;
+    targetRotationX = 0.0;
+    targetRotationY = 0.0;
+    targetRotationZ = 0.0;
     
     bDebug = NULL;
 }
@@ -27,7 +27,7 @@ void Shape::makeNumber( int _num, float _scale ){
     clear();
     
     pos.set(0,0);
-    org.set(0,0);
+    targetPos.set(0,0);
     
     //  Choose of Shapes
     //
@@ -82,9 +82,9 @@ void Shape::makeNumber( int _num, float _scale ){
         getVertices()[i] -= ofPoint(2,2);
         getVertices()[i] *= _scale;
     }
-    org = pos = this->getCentroid2D();
+    targetPos = pos = this->getCentroid2D();
     for (int i = 0; i < getVertices().size(); i++){
-        getVertices()[i] -= org;
+        getVertices()[i] -= targetPos;
     }
     ofRectangle rect = getBoundingBox();
     size = MAX(rect.width,rect.height);
@@ -111,9 +111,9 @@ void Shape::makeFromLimb(int _limbNum, Glyph &_glyph ){
     }
     close();
     
-    org = pos = this->getCentroid2D();
+    targetPos = pos = this->getCentroid2D();
     for (int i = 0; i < getVertices().size(); i++){
-        getVertices()[i] -= org;
+        getVertices()[i] -= targetPos;
     }
     
     ofRectangle rect = limb.getBoundingBox();
@@ -123,56 +123,46 @@ void Shape::makeFromLimb(int _limbNum, Glyph &_glyph ){
 }
 
 void Shape::flipH(){
-    rotationTargetX += 180;
-    while (rotationTargetX >= 360) {
-        rotationTargetX -= 360;
+    targetRotationX += 180;
+    while (targetRotationX >= 360) {
+        targetRotationX -= 360;
     }
 }
 
 void Shape::flipV(){
-    rotationTargetY += 180;
-    while (rotationTargetY >= 360) {
-        rotationTargetY -= 360;
+    targetRotationY += 180;
+    while (targetRotationY >= 360) {
+        targetRotationY -= 360;
     }
 }
 
 void Shape::turnLeft(){
-    if ( rotationTargetZ < 5){
-        rotationTargetZ = 360;
+    if ( targetRotationZ < 5){
+        targetRotationZ = 360;
     }
     
-    rotationTargetZ -= 5;
+    targetRotationZ -= 5;
 }
 
 void Shape::turnRight(){
-    rotationTargetZ += 5;
+    targetRotationZ += 5;
     
-    while (rotationTargetZ >= 360) {
-        rotationTargetZ -= 360;
+    while (targetRotationZ >= 360) {
+        targetRotationZ -= 360;
     }
-}
-
-//------------------------------------------------------------
-void Shape::addForce(ofPoint &_force){
-    acc += _force;
 }
 
 //------------------------------------------------------------
 void Shape::update(){
     
-    rotationX = ofLerp(rotationX, rotationTargetX, 0.1);
-    rotationY = ofLerp(rotationY, rotationTargetY, 0.1);
-    rotationZ = ofLerp(rotationZ, rotationTargetZ, 0.1);
+    rotationX = ofLerp(rotationX, targetRotationX, damping);
+    rotationY = ofLerp(rotationY, targetRotationY, damping);
+    rotationZ = ofLerp(rotationZ, targetRotationZ, damping);
     
-    pos.x = ofLerp(pos.x,org.x,0.1);
-    pos.y = ofLerp(pos.y,org.y,0.1);
-    pos.z = ofLerp(pos.z,org.y,0.1);
-    
-    vel += acc;
-    vel *= 1.0f - damping;
-    pos += vel;
-    
-    acc *= 0;
+    pos.x = ofLerp(pos.x,targetPos.x,damping);
+    pos.y = ofLerp(pos.y,targetPos.y,damping);
+    pos.z = ofLerp(pos.z,targetPos.z,damping);
+
 }
 
 //------------------------------------------------------------
@@ -198,14 +188,14 @@ void Shape::draw(){
     
     if(bDebug){
         ofPushMatrix();
-        ofTranslate(org);
+        ofTranslate(targetPos);
         ofSetColor(255);
         ofLine(-5,0,5,0);
         ofLine(0, -5, 0, 5);
         
-        ofRotateX(rotationTargetX);
-        ofRotateY(rotationTargetY);
-        ofRotateZ(rotationTargetZ);
+        ofRotateX(targetRotationX);
+        ofRotateY(targetRotationY);
+        ofRotateZ(targetRotationZ);
         
         ofEnableSmoothing();
         ofNoFill();
@@ -224,9 +214,9 @@ void Shape::draw(){
         ofSetColor(255,100);
         ofCircle(0,0, 7);
         
-        ofDrawBitmapString("x: "+ofToString(rotationTargetX), 15,-15);
-        ofDrawBitmapString("y: "+ofToString(rotationTargetY), 15,0);
-        ofDrawBitmapString("z: "+ofToString(rotationTargetZ), 15,15);
+        ofDrawBitmapString("x: "+ofToString(targetRotationX), 15,-15);
+        ofDrawBitmapString("y: "+ofToString(targetRotationY), 15,0);
+        ofDrawBitmapString("z: "+ofToString(targetRotationZ), 15,15);
         
         ofPopMatrix();
         ofDisableSmoothing();
@@ -238,105 +228,4 @@ void Shape::draw(){
 bool Shape::mouseHover(){
     return inside(ofGetMouseX()-ofGetWidth()*0.5-pos.x,
                   ofGetMouseY()-ofGetHeight()*0.5-pos.y);
-}
-
-//------------------------------------------------------------
-void Shape::addRepulsionForce(ofPoint posOfForce, float radius, float scale){
-    
-	// ----------- (2) calculate the difference & length
-	
-	ofPoint diff	= pos - posOfForce;
-	float length	= diff.length();
-	
-	// ----------- (3) check close enough
-	
-	bool bAmCloseEnough = true;
-    if (radius > 0){
-        if (length > radius){
-            bAmCloseEnough = false;
-        }
-    }
-	
-	// ----------- (4) if so, update force
-    
-	if (bAmCloseEnough == true){
-		float pct = 1 - (length / radius);  // stronger on the inside
-        diff.normalize();
-        acc += diff * scale * pct;
-    }
-}
-
-//------------------------------------------------------------
-void Shape::addAttractionForce(ofPoint posOfForce, float radius, float scale){
-	
-	// ----------- (2) calculate the difference & length
-	
-	ofPoint diff	= pos - posOfForce;
-	float length	= diff.length();
-	
-	// ----------- (3) check close enough
-	
-	bool bAmCloseEnough = true;
-    if (radius > 0){
-        if (length > radius){
-            bAmCloseEnough = false;
-        }
-    }
-	
-	// ----------- (4) if so, update force
-    
-	if (bAmCloseEnough == true){
-		float pct = 1 - (length / radius);  // stronger on the inside
-		diff.normalize();
-		acc -= diff * scale * pct;
-    }
-}
-
-//------------------------------------------------------------
-void Shape::infinitWalls(){
-	
-	// what are the walls
-	float minx = 0;
-	float miny = 0;
-	float maxx = ofGetWidth();
-	float maxy = ofGetHeight();
-}
-
-//------------------------------------------------------------
-void Shape::bounceOffWalls(){
-	
-	// sometimes it makes sense to damped, when we hit
-	bool bDampedOnCollision = true;
-	bool bDidICollide = false;
-	
-	// what are the walls
-	float minx = 0;
-	float miny = 0;
-	float maxx = ofGetWidth();
-	float maxy = ofGetHeight();
-	
-	if (pos.x > maxx){
-		pos.x = maxx; // move to the edge, (important!)
-		vel.x *= -1;
-		bDidICollide = true;
-	} else if (pos.x < minx){
-		pos.x = minx; // move to the edge, (important!)
-		vel.x *= -1;
-		bDidICollide = true;
-	}
-	
-	if (pos.y > maxy){
-		pos.y = maxy; // move to the edge, (important!)
-		vel.y *= -1;
-		bDidICollide = true;
-	} else if (pos.y < miny){
-		pos.y = miny; // move to the edge, (important!)
-		vel.y *= -1;
-		bDidICollide = true;
-	}
-	
-	if (bDidICollide == true && bDampedOnCollision == true){
-		vel *= 0.3;
-	}
-	
 }

@@ -31,8 +31,6 @@ public:
     ofPoint     getNormalPoint(ofPoint p, ofPoint a, ofPoint b);
     ofPoint     getGetClosePath( ofPoint _pos );
     
-    void        addCentralRepulsionForce( float _amount );
-    
     void        update();
     void        draw();
     

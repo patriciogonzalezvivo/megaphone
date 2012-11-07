@@ -23,19 +23,12 @@ public:
     void    turnLeft();
     void    turnRight();
     
-    void    setPosition( ofPoint _pos ){ org = _pos;};
-    void    setRotation( ofPoint _rot ){ rotationTargetX = _rot.x; rotationTargetZ = _rot.y; rotationTargetZ = _rot.z;};
-    ofPoint getRotation(){return ofPoint(rotationTargetX,rotationTargetY,rotationTargetZ);};
-    ofPoint getPosition(){return org;};
+    void    setPosition( ofPoint _pos ){ targetPos = _pos;};
+    void    setRotation( ofPoint _rot ){ targetRotationX = _rot.x; targetRotationZ = _rot.y; targetRotationZ = _rot.z;};
+    ofPoint getRotation(){return ofPoint(targetRotationX,targetRotationY,targetRotationZ);};
+    ofPoint getPosition(){return targetPos;};
     
     bool    mouseHover();
-    
-    void    addForce( ofPoint &_force );
-    void    addRepulsionForce(ofPoint p, float radius, float scale);
-    void    addAttractionForce(ofPoint p, float radius, float scale);
-
-    void    infinitWalls();
-    void    bounceOffWalls();
     
     void    update();
     void    draw();
@@ -44,13 +37,11 @@ public:
     
 private:
     ofFloatColor color, targetColor;
-    ofPoint org,pos;
+    ofPoint pos, targetPos;
     
-    ofPoint vel,acc;
-    
-    float   rotationX, rotationTargetX;
-    float   rotationY, rotationTargetY;
-    float   rotationZ, rotationTargetZ;
+    float   rotationX, targetRotationX;
+    float   rotationY, targetRotationY;
+    float   rotationZ, targetRotationZ;
     
     float   scale;
     float   size;

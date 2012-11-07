@@ -247,12 +247,6 @@ ofPoint Tangram::getGetClosePath(ofPoint _pos){
     return target;
 }
 
-void Tangram::addCentralRepulsionForce( float _amount ){
-    for(int i = 0; i < limbs.size(); i++){
-        limbs[i].addRepulsionForce( ofPoint(0,0), 500*_amount,0.3);
-    }
-}
-
 //----------------------------------------------------------- Mouse
 void Tangram::_mousePressed(ofMouseEventArgs &e){
 	if(bEdit){
