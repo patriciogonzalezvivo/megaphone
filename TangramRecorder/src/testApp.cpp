@@ -8,12 +8,6 @@ void testApp::setup(){
     
     ofSeedRandom(0); 
     
-    //  AUDIO
-    //
-	soundStream.setup(this, 0, 2, 44100, 256, 4);
-    smoothedVol     = 0.0;
-    micBar.setLabel("mic");
-    
     //  VISUAL
     //
     glyph = new Glyph();
@@ -26,20 +20,13 @@ void testApp::setup(){
     tangram.createSet();
 //    tangram.load("t6-20-14-1.tan");
     tangram.bDebug = true;
-    
-    
-    
+    tangram.bEdit = true;
+
     bDebug = true;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    //  AUDIO
-    //
-    micBar.setValue(smoothedVol);
-    if (bDebug){
-        micBar.updateGUI();
-    }
     
     //  VISUAL
     //
@@ -68,40 +55,7 @@ void testApp::draw(){
         } else {
             ofDrawBitmapString("Press E to enter into EDITMODE or M to hide this message", 15, 15);
         }
-        
-        ofSetColor(255);
-        micBar.draw();
     }
-}
-
-//--------------------------------------------------------------
-void testApp::audioIn(float * input, int bufferSize, int nChannels){
-	float curVol = 0.0;
-	
-	// samples are "interleaved"
-	int numCounted = 0;
-    
-    float left[bufferSize];
-    float right[bufferSize];
-    
-	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume
-	for (int i = 0; i < bufferSize; i++){
-		left[i]		= input[i*2]*0.5;
-		right[i]	= input[i*2+1]*0.5;
-        
-		curVol += left[i] * left[i];
-		curVol += right[i] * right[i];
-		numCounted+=2;
-	}
-	
-	//this is how we get the mean of rms :)
-	curVol /= (float)numCounted;
-	
-	// this is how we get the root of rms :)
-	curVol = sqrt( curVol );
-	
-	smoothedVol *= 0.93;
-	smoothedVol += 0.07 * curVol;
 }
 
 //--------------------------------------------------------------

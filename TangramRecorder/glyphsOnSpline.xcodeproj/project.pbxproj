@@ -11,7 +11,6 @@
 		119A1BEA164181F20003D223 /* Limb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 119A1BE7164181F20003D223 /* Limb.cpp */; };
 		3D6E30511649B8F700303EFD /* Tangram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D6E304F1649B8F700303EFD /* Tangram.cpp */; };
 		3D81448916432C920087371D /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D81448816432C920087371D /* Shape.cpp */; };
-		3DD68E5216483D5A005BA884 /* ThresholdBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD68E5016483D5A005BA884 /* ThresholdBar.cpp */; };
 		3DD68E5C16483E27005BA884 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD68E5516483E27005BA884 /* tinyxml.cpp */; };
 		3DD68E5D16483E27005BA884 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD68E5716483E27005BA884 /* tinyxmlerror.cpp */; };
 		3DD68E5E16483E27005BA884 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD68E5816483E27005BA884 /* tinyxmlparser.cpp */; };
@@ -77,8 +76,6 @@
 		3D6E30501649B8F700303EFD /* Tangram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tangram.h; sourceTree = "<group>"; };
 		3D81448716432B810087371D /* Shape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
 		3D81448816432C920087371D /* Shape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shape.cpp; sourceTree = "<group>"; };
-		3DD68E5016483D5A005BA884 /* ThresholdBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThresholdBar.cpp; sourceTree = "<group>"; };
-		3DD68E5116483D5A005BA884 /* ThresholdBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThresholdBar.h; sourceTree = "<group>"; };
 		3DD68E5516483E27005BA884 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
 		3DD68E5616483E27005BA884 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
 		3DD68E5716483E27005BA884 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
@@ -259,8 +256,6 @@
 				3D81448716432B810087371D /* Shape.h */,
 				3D81448816432C920087371D /* Shape.cpp */,
 				119A1BE4164181F20003D223 /* glyph */,
-				3DD68E5116483D5A005BA884 /* ThresholdBar.h */,
-				3DD68E5016483D5A005BA884 /* ThresholdBar.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -363,7 +358,6 @@
 				119A1BE9164181F20003D223 /* Glyph.cpp in Sources */,
 				119A1BEA164181F20003D223 /* Limb.cpp in Sources */,
 				3D81448916432C920087371D /* Shape.cpp in Sources */,
-				3DD68E5216483D5A005BA884 /* ThresholdBar.cpp in Sources */,
 				3DD68E5C16483E27005BA884 /* tinyxml.cpp in Sources */,
 				3DD68E5D16483E27005BA884 /* tinyxmlerror.cpp in Sources */,
 				3DD68E5E16483E27005BA884 /* tinyxmlparser.cpp in Sources */,

@@ -2,10 +2,6 @@
 
 #include "ofMain.h"
 
-//  Audio
-//
-#include "ThresholdBar.h"
-
 //  Visual
 //
 #include "Tangram.h"
@@ -25,13 +21,6 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    
-    //  Audio
-    //
-    void audioIn(float * input, int bufferSize, int nChannels);
-    ofSoundStream   soundStream;
-    float           smoothedVol;
-    ThresholdBar    micBar;
     
     //  Visual
     //

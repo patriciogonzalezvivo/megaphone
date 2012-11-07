@@ -25,12 +25,6 @@ public:
     void        createSet();
     void        createFromGlyph( Glyph *_glyph );
     
-    ofPoint     getPathPositionAt( float _pct );
-    int         getShapeNumberAt( float _pct);
-    int         getShapeNumberAt( ofPoint _pos);
-    ofPoint     getNormalPoint(ofPoint p, ofPoint a, ofPoint b);
-    ofPoint     getGetClosePath( ofPoint _pos );
-    
     void        update();
     void        draw();
     
@@ -42,10 +36,9 @@ private:
     virtual void    _mouseReleased(ofMouseEventArgs &e);
     virtual void    _keyPressed(ofKeyEventArgs &e);
     
-    void            _makeInsidePath();
+    void            _centerShapes();
     
     vector<Shape>   limbs;
-    ofPolyline      insidePath;
     
     float           perimeter;
     float           area;

@@ -52,7 +52,7 @@ bool Tangram::load( string _file ){
             }
         }
         
-        _makeInsidePath();
+        _centerShapes();
         
         return true;
     } else {
@@ -93,7 +93,7 @@ void Tangram::createFromGlyph( Glyph *_glyph ){
         limbs.push_back( newShape );
     }
     
-    _makeInsidePath();
+    _centerShapes();
 }
 
 void Tangram::createSet(){
@@ -105,23 +105,21 @@ void Tangram::createSet(){
         limbs.push_back( newShape );
     }
     
-    _makeInsidePath();
+    _centerShapes();
 }
 
-void Tangram::_makeInsidePath(){
+void Tangram::_centerShapes(){
     
-    insidePath.clear();
+    ofPolyline centers;
     for (int i = 0; i < limbs.size(); i++){
-        for (int j = 0; j < limbs[i].getVertices().size(); j++) {
-            ofPoint vert = limbs[i].getVertices()[j];
-            insidePath.addVertex( vert );
-        }
+        centers.addVertex(limbs[i].getPosition());
     }
-    insidePath.close();
-    perimeter = insidePath.getPerimeter();
-    area = insidePath.getArea();
     
-    this->set( insidePath.getBoundingBox() );
+    ofPoint center = centers.getBoundingBox().getCenter();
+    
+    for(int i = 0; i < limbs.size();i++){
+        limbs[i].setPosition( limbs[i].getPosition() -center);
+    }
 }
 
 void Tangram::update(){
@@ -130,10 +128,9 @@ void Tangram::update(){
         if (bEdit){
             limbs[i].bDebug = limbs[i].mouseHover();
         }
-//        limbs[i].addAttractionForce( limbs[i].org, area*2.0, 0.1);
 
         if (bDebug)
-            limbs[i].bDebug = limbs[i].mouseHover();
+            limbs[i].bDebug = true;
         
         limbs[i].update();
     }
@@ -143,108 +140,6 @@ void Tangram::draw(){
     for(int i = 0; i < limbs.size(); i++){
         limbs[i].draw();
     }
-}
-
-int Tangram::getShapeNumberAt( ofPoint _pos ){
-    int rta = -1;
-    for(int i = 0; i < limbs.size(); i++){
-        if (limbs[i].inside(_pos) ){
-            rta = i;
-            break;
-        }
-    }
-    return rta;
-}
-
-int Tangram::getShapeNumberAt( float _pct ){
-    
-    float previus = 0.0;
-    float target = _pct * perimeter;
-    
-    for (int i = 0; i < limbs.size(); i++){
-        
-        for(int j = 0; j < limbs[i].getVertices().size()-1; j++){
-            ofPoint diff = limbs[i].getVertices()[j+1] - limbs[i].getVertices()[j];
-            float lenght = diff.length();
-            
-            if ( target >= previus && target <= previus + lenght ){
-                return j;
-            }
-            previus += lenght;
-        }
-        
-    }
-    return -1;
-}
-
-ofPoint	Tangram::getPathPositionAt( float _pct ){
-    
-	ofPoint pos;
-    float previus = 0.0;
-    float target = _pct * perimeter;
-    
-	for (int i = 0; i < insidePath.getVertices().size()-1; i++){
-        ofPoint diff = insidePath.getVertices()[i+1] - insidePath.getVertices()[i];
-        float lenght = diff.length();
-        
-		if ( target >= previus && target <= previus + lenght ){
-			
-			float pct = ( target - previus)/lenght;
-			
-			pos.x = (1-pct) * insidePath.getVertices()[i].x + (pct) * insidePath.getVertices()[i+1].x;
-			pos.y = (1-pct) * insidePath.getVertices()[i].y + (pct) * insidePath.getVertices()[i+1].y;
-            
-            break;
-		}
-        
-        previus += lenght;
-	}
-    
-    return pos;
-}
-
-ofPoint Tangram::getNormalPoint(ofPoint p, ofPoint a, ofPoint b) {
-    ofPoint ap = p - a;
-    ofPoint ab = b - a;
-    ab.normalize();
-    ab *= ap.dot(ab);
-    return a+ab;
-}
-
-ofPoint Tangram::getGetClosePath(ofPoint _pos){
-    
-    ofPoint normal;
-    ofPoint target;
-    float minDist = 1000000;
-    
-    for (int i = 0; i < insidePath.getVertices().size()-1; i++) {
-        
-        ofPoint a = insidePath.getVertices()[i];
-        ofPoint b = insidePath.getVertices()[i+1];
-        
-        ofPoint normalPoint = getNormalPoint(_pos, a, b);
-        
-        if (normalPoint.x < a.x || normalPoint.x > b.x) {
-            normalPoint = b;
-        }
-        
-        float distance = _pos.distance(normalPoint);
-        
-        if (distance < minDist) {
-            minDist = distance;
-            
-            normal = normalPoint;
-            
-            ofPoint dir = b - a;
-            dir.normalize();
-            
-            dir *= 10;
-            target = normalPoint;
-            target += dir;
-        }
-    }
-    
-    return target;
 }
 
 //----------------------------------------------------------- Mouse
