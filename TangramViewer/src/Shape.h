@@ -11,6 +11,11 @@
 #include "ofMain.h"
 #include "Glyph.h"
 
+struct Data{
+    ofPoint pos;
+    ofPoint rot;
+};
+
 class Shape : public ofPolyline {
 public:
     Shape();
@@ -42,17 +47,18 @@ public:
     void    update(float _posLerp, float _rotLerp);
     void    draw();
     
+    Data    actual;
+    Data    target;
+    
+    bool    *bTrail;
     bool    bDebug;
     
 private:
-    ofFloatColor color, targetColor;
-    ofPoint pos, targetPos;
+    vector<Data>    trail;
+    
+    ofFloatColor color;
     ofPoint vel;
     ofPoint acc;
-    
-    float   rotationX, targetRotationX;
-    float   rotationY, targetRotationY;
-    float   rotationZ, targetRotationZ;
     
     float   scale;
     float   size;

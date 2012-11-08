@@ -129,6 +129,12 @@ void testApp::keyPressed(int key){
         bDebug = !bDebug;
     } else if (key == 'd'){
         tangram.bDebug = !tangram.bDebug;
+    } else if (key == 'e'){
+        tangram.bEdit = !tangram.bEdit;
+    } else if (key == 't'){
+        tangram.bTrail = !tangram.bTrail;
+    } else if (key == 'z'){
+        tangram.bSortZ = !tangram.bSortZ;
     } else if (key == 's'){
         string filename = "t"+ofToString(ofGetDay())+"-"+ofToString(ofGetHours())+"-"+ofToString(ofGetMinutes())+"-"+ofToString(ofGetSeconds());
         tangram.save("tangramShape/"+filename+".tan");

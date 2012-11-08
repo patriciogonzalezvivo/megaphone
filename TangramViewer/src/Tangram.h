@@ -23,6 +23,7 @@ public:
     bool    load( string _file );
     bool    save( string _file );
     
+    void    clear();
     void    createSet();
     void    createFromGlyph( Glyph *_glyph );
     
@@ -32,6 +33,8 @@ public:
     void    update(float _posLerp, float _rotLerp, float _camLerp, int _wakeUpDist);
     void    draw();
     
+    bool    bSortZ;
+    bool    bTrail;
     bool    bDebug;
     bool    bEdit;
     
@@ -44,7 +47,7 @@ private:
     void            _centerShapes();
     void            _moveShapesTo(ofVec3f _targetPos);
     
-    vector<Shape>   limbs;
+    vector<Shape*>   limbs;
     
     float           scale, targetScale;
     
