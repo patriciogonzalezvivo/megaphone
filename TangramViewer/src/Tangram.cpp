@@ -11,6 +11,8 @@ Tangram::Tangram(){
     bDebug = false;
     bEdit = false;
     selectedLimb = -1;
+    scale = 1.0;
+    targetScale = 1.0;
     
     ofAddListener(ofEvents().mousePressed, this, &Tangram::_mousePressed);
     ofAddListener(ofEvents().mouseDragged, this, &Tangram::_mouseDragged);
@@ -39,6 +41,7 @@ bool Tangram::load( string _file ){
         
         //  Just load the new positions and rotations
         //
+        targetScale = XML.getValue("scale", 1.0);
         for (int i = 0; i < total; i++){
             if ( XML.pushTag("shape",i ) ){
                 
@@ -108,6 +111,22 @@ void Tangram::createSet(){
     _centerShapes();
 }
 
+void Tangram::rotateY(float _angle){
+    
+    ofMatrix4x4 matrix;
+    matrix.makeIdentityMatrix();
+    matrix.rotate( _angle, 0.0, 1.0, 0.0);
+    
+    for(int i = 0; i < limbs.size();i++){
+        
+        ofPoint pos = limbs[i].getPosition();
+        ofPoint rot = limbs[i].getRotation();
+        
+        limbs[i].setRotation( ofPoint(rot.x,rot.y-_angle,rot.z) );
+        limbs[i].setPosition( matrix * pos );
+    }
+}
+
 void Tangram::_centerShapes(){
     
     ofPolyline centers;
@@ -115,14 +134,16 @@ void Tangram::_centerShapes(){
         centers.addVertex(limbs[i].getPosition());
     }
     
-    ofPoint center = centers.getBoundingBox().getCenter();
-    
+    _moveShapesTo( centers.getBoundingBox().getCenter() );
+}
+
+void Tangram::_moveShapesTo(ofVec3f _targetPos){
     for(int i = 0; i < limbs.size();i++){
-        limbs[i].setPosition( limbs[i].getPosition() -center);
+        limbs[i].setPosition( limbs[i].getPosition() - _targetPos);
     }
 }
 
-void Tangram::update(float _posLerp, float _rotLerp){
+void Tangram::update(float _posLerp, float _rotLerp, float _camLerp){
     for(int i = 0; i < limbs.size(); i++){
 
         if (bEdit){
@@ -134,12 +155,17 @@ void Tangram::update(float _posLerp, float _rotLerp){
         
         limbs[i].update( _posLerp,  _rotLerp);
     }
+    
+    scale = ofLerp(scale, targetScale, _camLerp);
 }
 
 void Tangram::draw(){
+    ofPushMatrix();
+    ofScale(scale, scale, scale);
     for(int i = 0; i < limbs.size(); i++){
         limbs[i].draw();
     }
+    ofPopMatrix();
 }
 
 //----------------------------------------------------------- Mouse

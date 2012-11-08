@@ -12,28 +12,31 @@ void testApp::setup(){
     //
     glyph = new Glyph();
     glyph->setScale(100);
+//    tangram.createFromGlyph( glyph );
+    tangram.createSet();
+    tangram.bDebug = true;
+    tangram.bEdit = false;
+
+    cameraAngle = 0.0;
+    tangramAngle = 0.0;
     
+    //  CONTROL
+    //
     gui.setup("Controls");
     gui.add(posLerp.setup("position_amount", 0.05, 0.0, 0.1));
     gui.add(rotLerp.setup("rotation_amount", 0.05, 0.0, 0.1));
+    gui.add(camLerp.setup("camera_amount",0.05,0.0,0.1));
+    gui.loadFromFile("gui.xml");
     dataDir.listDir("tangramShape");
     selectedFile = 0;
-
-//    tangram.createFromGlyph( glyph );
-    tangram.createSet();
-//    tangram.load("t6-20-14-1.tan");
-    tangram.bDebug = true;
-    tangram.bEdit = true;
-
     bDebug = true;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     
-    //  VISUAL
-    //
-    tangram.update(posLerp, rotLerp);
+    cameraAngle = ofLerp(cameraAngle, tangramAngle, camLerp);
+    tangram.update(posLerp, rotLerp, camLerp);
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
@@ -44,20 +47,19 @@ void testApp::draw(){
     
     ofPushMatrix();
     ofTranslate(ofGetWidth()*0.5, ofGetHeight()*0.5);
+    ofRotateY(cameraAngle);
     tangram.draw();
     ofPopMatrix();
     
     //  Draw the average volume
     //
     if (bDebug){
-    
-        if (tangram.bEdit){
-            ofDrawBitmapString("Click over a shape to move and by pressing H, V, LEFT and RIGHT at the same time you can rotate it and flip it", 15, 15);
-        } else {
-            ofDrawBitmapString("Press E to enter into EDITMODE or M to hide this message", 15, 15);
-        }
         gui.draw();
     }
+}
+
+void testApp::exit(){
+    gui.saveToFile("gui.xml");
 }
 
 //--------------------------------------------------------------
@@ -70,6 +72,8 @@ void testApp::keyPressed(int key){
 //        tangram.createFromGlyph( glyph );
         
         tangram.load( "tangramShape/" + dataDir.getFile(selectedFile).getFileName() );
+        tangramAngle = ofRandom(180);
+        tangram.rotateY(tangramAngle);
         selectedFile = (selectedFile+1)%dataDir.size();
     } else if (key == 'm'){
         bDebug = !bDebug;

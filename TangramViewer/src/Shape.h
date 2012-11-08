@@ -23,10 +23,10 @@ public:
     void    turnLeft();
     void    turnRight();
     
-    void    setPosition( ofPoint _pos ){ targetPos = _pos;};
-    void    setRotation( ofPoint _rot ){ targetRotationX = _rot.x; targetRotationZ = _rot.y; targetRotationZ = _rot.z;};
-    ofPoint getRotation(){return ofPoint(targetRotationX,targetRotationY,targetRotationZ);};
-    ofPoint getPosition(){return targetPos;};
+    void    setPosition( ofPoint _pos );
+    void    setRotation( ofPoint _rot );
+    ofPoint getRotation();
+    ofPoint getPosition();
     
     bool    mouseHover();
     

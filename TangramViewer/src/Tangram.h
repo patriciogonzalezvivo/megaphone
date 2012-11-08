@@ -26,7 +26,9 @@ public:
     void        createSet();
     void        createFromGlyph( Glyph *_glyph );
     
-    void        update(float _posLerp, float _rotLerp);
+    void        rotateY(float _angle);
+    
+    void        update(float _posLerp, float _rotLerp, float _camLerp);
     void        draw();
     
     bool        bDebug;
@@ -39,11 +41,11 @@ private:
     virtual void    _keyPressed(ofKeyEventArgs &e);
     
     void            _centerShapes();
+    void            _moveShapesTo(ofVec3f _targetPos);
     
     vector<Shape>   limbs;
     
-    float           perimeter;
-    float           area;
+    float           scale, targetScale;
     
     int             selectedLimb;
 };

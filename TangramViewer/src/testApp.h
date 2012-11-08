@@ -11,6 +11,7 @@ public:
     void setup();
     void update();
     void draw();
+    void exit();
 
     void keyPressed  (int key);
     void keyReleased(int key);
@@ -30,11 +31,13 @@ public:
     ofxPanel        gui;
     ofxFloatSlider  posLerp;
     ofxFloatSlider  rotLerp;
+    ofxFloatSlider  camLerp;
     
-    ofEasyCam       cam;
     ofDirectory     dataDir;
     int             selectedFile;
     
+    float             cameraAngle;
+    float             tangramAngle;
     int             width, height;
     bool            bDebug;
 };

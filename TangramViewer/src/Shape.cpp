@@ -151,6 +151,24 @@ void Shape::turnRight(){
     }
 }
 
+void Shape::setPosition( ofPoint _pos ){
+    targetPos = _pos;
+};
+
+void Shape::setRotation( ofPoint _rot ){
+    targetRotationX = _rot.x;
+    targetRotationY = _rot.y;
+    targetRotationZ = _rot.z;
+};
+
+ofPoint Shape::getRotation(){
+    return ofPoint(targetRotationX,targetRotationY,targetRotationZ);
+};
+
+ofPoint Shape::getPosition(){
+    return targetPos;
+}
+
 //------------------------------------------------------------
 void Shape::update(float _posLerp, float _rotLerp){
     
@@ -172,8 +190,8 @@ void Shape::draw(){
     
     ofTranslate(pos);
     
-    ofRotateX(rotationX);
     ofRotateY(rotationY);
+    ofRotateX(rotationX);
     ofRotateZ(rotationZ);
     
     ofFill();
@@ -191,9 +209,9 @@ void Shape::draw(){
         ofSetColor(255);
         ofLine(-5,0,5,0);
         ofLine(0, -5, 0, 5);
-        
-        ofRotateX(targetRotationX);
+    
         ofRotateY(targetRotationY);
+        ofRotateX(targetRotationX);
         ofRotateZ(targetRotationZ);
         
         ofEnableSmoothing();
