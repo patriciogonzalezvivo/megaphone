@@ -56,7 +56,6 @@ void Shape::update(){
     vel += acc;
     vel *= 1.0f - damping;
     pos += vel;
-    
     acc *= 0;
 }
 

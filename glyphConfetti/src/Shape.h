@@ -18,7 +18,6 @@ public:
     void makeFromLimb(int _limbNum, Glyph &_glyph);
     
     void    addForce( ofPoint &_force );
-    
     void    addRepulsionForce(ofPoint p, float radius, float scale);
     void    addAttractionForce(ofPoint p, float radius, float scale);
     void    addRepulsionForce(Shape &p, float scale);

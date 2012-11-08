@@ -12,22 +12,129 @@ Shape::Shape(){
     size = 20;
     damping = 0.05f;
     
-    rotationX = 0.0;
-    rotationY = 0.0;
-    rotationZ = 0.0;
-    
-    targetRotationX = 0.0;
-    targetRotationY = 0.0;
-    targetRotationZ = 0.0;
+    actual.rot.set(0.0,0.0,0.0);
+    target.rot.set(0.0,0.0,0.0);
     
     bDebug = NULL;
 }
 
+void Shape::update(float _posLerp, float _rotLerp){
+    
+    actual.rot.x = ofLerp(actual.rot.x, target.rot.x, _rotLerp);
+    actual.rot.y = ofLerp(actual.rot.y, target.rot.y, _rotLerp);
+    actual.rot.z = ofLerp(actual.rot.z, target.rot.z, _rotLerp);
+    
+    if ( getDistanceToTarget() > 10) {
+        addAttractionForce(target.pos, 1000, 0.3);
+    } else {
+        actual.pos.x = ofLerp(actual.pos.x,target.pos.x,_posLerp);
+        actual.pos.y = ofLerp(actual.pos.y,target.pos.y,_posLerp);
+        actual.pos.z = ofLerp(actual.pos.z,target.pos.z,_posLerp);
+    }
+    
+    vel += acc;
+    vel *= 1.0f - damping;
+    actual.pos += vel;
+    acc *= 0;
+    
+    trail.push_back(actual);
+    while(trail.size() > 10){
+        trail.erase(trail.begin());
+    }
+}
+
+void Shape::draw(){
+    //  Make the shape
+    //
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    for (int i = 0; i < getVertices().size(); i++) {
+        mesh.addVertex(getVertices()[i]);
+    }
+    
+    
+    //  Draw Trail
+    //
+    for (int j = 0; j < trail.size(); j++) {
+        ofPushMatrix();
+        ofTranslate(trail[j].pos);
+        ofRotateY(trail[j].rot.y);
+        ofRotateX(trail[j].rot.x);
+        ofRotateZ(trail[j].rot.z);
+        
+        ofFill();
+        ofColor trailColor = color;
+        float pct = trailColor.getSaturation()*((float)j/(float)trail.size());
+        trailColor.setSaturation( pct );
+        trailColor.a = pct;
+        ofSetColor(trailColor);
+        mesh.draw();
+        ofPopMatrix();
+    }
+    
+    
+    //  Draw Shape
+    //
+    ofPushStyle();
+    ofPushMatrix();
+    ofTranslate(actual.pos);
+    ofRotateY(actual.rot.y);
+    ofRotateX(actual.rot.x);
+    ofRotateZ(actual.rot.z);
+    
+    ofFill();
+    ofSetColor(color);
+    mesh.draw();
+    ofPopMatrix();
+
+    
+    if(bDebug){
+        ofPushMatrix();
+        ofTranslate(target.pos);
+        ofSetColor(255);
+        ofLine(-5,0,5,0);
+        ofLine(0, -5, 0, 5);
+        ofLine(0, 0, -5, 0, 0, 5);
+        
+        ofRotateY(target.rot.y);
+        ofRotateX(target.rot.x);
+        ofRotateZ(target.rot.z);
+        
+        ofEnableSmoothing();
+        ofNoFill();
+        ofBeginShape();
+        for (int i = 0; i < getVertices().size(); i++) {
+            ofVertex(getVertices()[i]);
+        }
+        ofEndShape(true);
+        
+        ofPopMatrix();
+        
+        ofPushMatrix();
+        ofTranslate(actual.pos);
+        
+        ofFill();
+        ofSetColor(255,100);
+        ofSphere(0,0,0, 7);
+//        ofCircle(0,0, 7);
+//        
+//        ofDrawBitmapString("x: "+ofToString(target.rot.x), 15,-15);
+//        ofDrawBitmapString("y: "+ofToString(target.rot.y), 15,0);
+//        ofDrawBitmapString("z: "+ofToString(target.rot.z), 15,15);
+        
+        ofPopMatrix();
+        ofDisableSmoothing();
+    }
+    
+    ofPopStyle();
+}
+
+//------------------------------------------------- SETUP
 void Shape::makeNumber( int _num, float _scale ){
     clear();
     
-    pos.set(0,0);
-    targetPos.set(0,0);
+    actual.pos.set(0,0);
+    target.pos.set(0,0);
     
     //  Choose of Shapes
     //
@@ -82,9 +189,9 @@ void Shape::makeNumber( int _num, float _scale ){
         getVertices()[i] -= ofPoint(2,2);
         getVertices()[i] *= _scale;
     }
-    targetPos = pos = this->getCentroid2D();
+    target.pos = actual.pos = this->getCentroid2D();
     for (int i = 0; i < getVertices().size(); i++){
-        getVertices()[i] -= targetPos;
+        getVertices()[i] -= target.pos;
     }
     ofRectangle rect = getBoundingBox();
     size = MAX(rect.width,rect.height);
@@ -111,9 +218,9 @@ void Shape::makeFromLimb(int _limbNum, Glyph &_glyph ){
     }
     close();
     
-    targetPos = pos = this->getCentroid2D();
+    target.pos = actual.pos = this->getCentroid2D();
     for (int i = 0; i < getVertices().size(); i++){
-        getVertices()[i] -= targetPos;
+        getVertices()[i] -= target.pos;
     }
     
     ofRectangle rect = limb.getBoundingBox();
@@ -122,68 +229,75 @@ void Shape::makeFromLimb(int _limbNum, Glyph &_glyph ){
     color = _glyph.limbs()[_limbNum].color();
 }
 
-float Shape::getDistanceToTarget(){
-    return targetPos.distance(pos);
+void Shape::setTargetPos( ofPoint _pos ){
+    target.pos = _pos;
+};
+
+void Shape::setTargetRot( ofPoint _rot ){
+    target.rot.x = _rot.x;
+    target.rot.y = _rot.y;
+    target.rot.z = _rot.z;
+};
+
+//----------------------------------------------------- Questions
+bool Shape::mouseHover(){
+    return inside(ofGetMouseX()-ofGetWidth()*0.5-actual.pos.x,
+                  ofGetMouseY()-ofGetHeight()*0.5-actual.pos.y);
 }
 
+ofPoint Shape::getTargetRot(){
+    return ofPoint(target.rot.x,target.rot.y,target.rot.z);
+};
+
+ofPoint Shape::getTargetPos(){
+    return target.pos;
+}
+
+float Shape::getDistanceToTarget(){
+    return target.pos.distance(actual.pos);
+}
+
+//----------------------------------------------------- ACTIONS
 void Shape::flipH(){
-    targetRotationX += 180;
-    while (targetRotationX >= 360) {
-        targetRotationX -= 360;
+    target.rot.x += 180;
+    while (target.rot.x >= 360) {
+        target.rot.x -= 360;
     }
 }
 
 void Shape::flipV(){
-    targetRotationY += 180;
-    while (targetRotationY >= 360) {
-        targetRotationY -= 360;
+    target.rot.y += 180;
+    while (target.rot.y >= 360) {
+        target.rot.y -= 360;
     }
 }
 
 void Shape::turnLeft(){
-    if ( targetRotationZ < 5){
-        targetRotationZ = 360;
+    if ( target.rot.z < 5){
+        target.rot.z = 360;
     }
     
-    targetRotationZ -= 5;
+    target.rot.z -= 5;
 }
 
 void Shape::turnRight(){
-    targetRotationZ += 5;
+    target.rot.z += 5;
     
-    while (targetRotationZ >= 360) {
-        targetRotationZ -= 360;
+    while (target.rot.z >= 360) {
+        target.rot.z -= 360;
     }
 }
 
-void Shape::setTargetPos( ofPoint _pos ){
-    targetPos = _pos;
-};
 
-void Shape::setTargetRot( ofPoint _rot ){
-    targetRotationX = _rot.x;
-    targetRotationY = _rot.y;
-    targetRotationZ = _rot.z;
-};
-
-ofPoint Shape::getTargetRot(){
-    return ofPoint(targetRotationX,targetRotationY,targetRotationZ);
-};
-
-ofPoint Shape::getTargetPos(){
-    return targetPos;
-}
-
-//------------------------------------------------------------
 void Shape::addForce(ofPoint &_force){
     acc += _force;
 }
-//------------------------------------------------------------
+//------------------------------------------------------------ PHYSICS
 void Shape::addRepulsionForce(ofPoint posOfForce, float radius, float scale){
     
 	// ----------- (2) calculate the difference & length
 	
-	ofPoint diff	= pos - posOfForce;
+	ofPoint diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -205,12 +319,11 @@ void Shape::addRepulsionForce(ofPoint posOfForce, float radius, float scale){
     }
 }
 
-//------------------------------------------------------------
 void Shape::addAttractionForce(ofPoint posOfForce, float radius, float scale){
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofPoint diff	= pos - posOfForce;
+	ofPoint diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -232,16 +345,15 @@ void Shape::addAttractionForce(ofPoint posOfForce, float radius, float scale){
     }
 }
 
-//------------------------------------------------------------
 void Shape::addRepulsionForce(Shape &s, float radius, float scale){
 	
 	// ----------- (1) make a vector of where this particle p is:
 	ofPoint posOfForce;
-	posOfForce.set(s.pos);
+	posOfForce.set(s.actual.pos);
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofVec2f diff	= pos - posOfForce;
+	ofVec2f diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -265,16 +377,15 @@ void Shape::addRepulsionForce(Shape &s, float radius, float scale){
     }
 }
 
-//------------------------------------------------------------
 void Shape::addRepulsionForce(Shape &s, float scale){
 	
 	// ----------- (1) make a vector of where this particle p is:
 	ofPoint posOfForce;
-	posOfForce.set(s.pos);
+	posOfForce.set(s.actual.pos);
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofVec2f diff	= pos - posOfForce;
+	ofVec2f diff	= actual.pos - posOfForce;
 	float length	= diff.length();
     float radius    = size*2.f + s.size*2.f;
 	
@@ -299,16 +410,15 @@ void Shape::addRepulsionForce(Shape &s, float scale){
     }
 }
 
-//------------------------------------------------------------
 void Shape::addAttractionForce(Shape &s, float radius, float scale){
 	
 	// ----------- (1) make a vector of where this particle p is:
 	ofPoint posOfForce;
-	posOfForce.set(s.pos);
+	posOfForce.set(s.actual.pos);
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofPoint diff	= pos - posOfForce;
+	ofPoint diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -333,16 +443,15 @@ void Shape::addAttractionForce(Shape &s, float radius, float scale){
 	
 }
 
-//------------------------------------------------------------
 void Shape::addClockwiseForce(Shape &s, float radius, float scale){
 	
 	// ----------- (1) make a vector of where this particle p is:
 	ofPoint posOfForce;
-	posOfForce.set(s.pos);
+	posOfForce.set(s.actual.pos);
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofPoint diff	= pos - posOfForce;
+	ofPoint diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -370,16 +479,15 @@ void Shape::addClockwiseForce(Shape &s, float radius, float scale){
     }
 }
 
-//------------------------------------------------------------
 void Shape::addCounterClockwiseForce(Shape &s, float radius, float scale){
 	
 	// ----------- (1) make a vector of where this particle p is:
 	ofPoint posOfForce;
-	posOfForce.set(s.pos);
+	posOfForce.set(s.actual.pos);
 	
 	// ----------- (2) calculate the difference & length
 	
-	ofPoint diff	= pos - posOfForce;
+	ofPoint diff	= actual.pos - posOfForce;
 	float length	= diff.length();
 	
 	// ----------- (3) check close enough
@@ -404,88 +512,3 @@ void Shape::addCounterClockwiseForce(Shape &s, float radius, float scale){
     }
 }
 
-//------------------------------------------------------------
-void Shape::update(float _posLerp, float _rotLerp){
-    
-    rotationX = ofLerp(rotationX, targetRotationX, _rotLerp);
-    rotationY = ofLerp(rotationY, targetRotationY, _rotLerp);
-    rotationZ = ofLerp(rotationZ, targetRotationZ, _rotLerp);
-    if ( getDistanceToTarget() > 10) {
-        addAttractionForce(targetPos, 1000, 0.3);
-    } else {
-        pos.x = ofLerp(pos.x,targetPos.x,_posLerp);
-        pos.y = ofLerp(pos.y,targetPos.y,_posLerp);
-        pos.z = ofLerp(pos.z,targetPos.z,_posLerp);
-    }
-    
-    vel += acc;
-    vel *= 1.0f - damping;
-    pos += vel;
-    acc *= 0;
-
-}
-
-//------------------------------------------------------------
-void Shape::draw(){
-    ofPushStyle();
-    
-    ofPushMatrix();
-    
-    ofTranslate(pos);
-    
-    ofRotateY(rotationY);
-    ofRotateX(rotationX);
-    ofRotateZ(rotationZ);
-    
-    ofFill();
-    ofSetColor(color);
-    ofBeginShape();
-    for (int i = 0; i < getVertices().size(); i++) {
-        ofVertex(getVertices()[i]);
-    }
-    ofEndShape(true);
-    ofPopMatrix();
-    
-    if(bDebug){
-        ofPushMatrix();
-        ofTranslate(targetPos);
-        ofSetColor(255);
-        ofLine(-5,0,5,0);
-        ofLine(0, -5, 0, 5);
-    
-        ofRotateY(targetRotationY);
-        ofRotateX(targetRotationX);
-        ofRotateZ(targetRotationZ);
-        
-        ofEnableSmoothing();
-        ofNoFill();
-        ofBeginShape();
-        for (int i = 0; i < getVertices().size(); i++) {
-            ofVertex(getVertices()[i]);
-        }
-        ofEndShape(true);
-        
-        ofPopMatrix();
-        
-        ofPushMatrix();
-        ofTranslate(pos);
-        
-        ofFill();
-        ofSetColor(255,100);
-        ofCircle(0,0, 7);
-        
-        ofDrawBitmapString("x: "+ofToString(targetRotationX), 15,-15);
-        ofDrawBitmapString("y: "+ofToString(targetRotationY), 15,0);
-        ofDrawBitmapString("z: "+ofToString(targetRotationZ), 15,15);
-        
-        ofPopMatrix();
-        ofDisableSmoothing();
-    }
-    
-    ofPopStyle();
-}
-
-bool Shape::mouseHover(){
-    return inside(ofGetMouseX()-ofGetWidth()*0.5-pos.x,
-                  ofGetMouseY()-ofGetHeight()*0.5-pos.y);
-}
