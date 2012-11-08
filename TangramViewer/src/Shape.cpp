@@ -121,6 +121,10 @@ void Shape::makeFromLimb(int _limbNum, Glyph &_glyph ){
     color = _glyph.limbs()[_limbNum].color();
 }
 
+float Shape::getDistanceToTarget(){
+    return targetPos.distance(pos);
+}
+
 void Shape::flipH(){
     targetRotationX += 180;
     while (targetRotationX >= 360) {

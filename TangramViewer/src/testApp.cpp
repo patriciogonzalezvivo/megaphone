@@ -26,6 +26,7 @@ void testApp::setup(){
     gui.add(posLerp.setup("position_amount", 0.05, 0.0, 0.1));
     gui.add(rotLerp.setup("rotation_amount", 0.05, 0.0, 0.1));
     gui.add(camLerp.setup("camera_amount",0.05,0.0,0.1));
+    gui.add(wakeUpDist.setup("wakeUpDist", 100, 50, 500));
     gui.loadFromFile("gui.xml");
     dataDir.listDir("tangramShape");
     selectedFile = 0;
@@ -36,7 +37,7 @@ void testApp::setup(){
 void testApp::update(){
     
     cameraAngle = ofLerp(cameraAngle, tangramAngle, camLerp);
-    tangram.update(posLerp, rotLerp, camLerp);
+    tangram.update(posLerp, rotLerp, camLerp, wakeUpDist);
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
@@ -72,7 +73,7 @@ void testApp::keyPressed(int key){
 //        tangram.createFromGlyph( glyph );
         
         tangram.load( "tangramShape/" + dataDir.getFile(selectedFile).getFileName() );
-        tangramAngle = ofRandom(180);
+        tangramAngle = ofRandom(360);
         tangram.rotateY(tangramAngle);
         selectedFile = (selectedFile+1)%dataDir.size();
     } else if (key == 'm'){

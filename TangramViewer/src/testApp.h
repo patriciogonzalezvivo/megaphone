@@ -32,6 +32,7 @@ public:
     ofxFloatSlider  posLerp;
     ofxFloatSlider  rotLerp;
     ofxFloatSlider  camLerp;
+    ofxIntSlider    wakeUpDist;
     
     ofDirectory     dataDir;
     int             selectedFile;

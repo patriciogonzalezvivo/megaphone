@@ -143,7 +143,7 @@ void Tangram::_moveShapesTo(ofVec3f _targetPos){
     }
 }
 
-void Tangram::update(float _posLerp, float _rotLerp, float _camLerp){
+void Tangram::update(float _posLerp, float _rotLerp, float _camLerp, int _wakeUpDist){
     for(int i = 0; i < limbs.size(); i++){
 
         if (bEdit){
@@ -152,8 +152,11 @@ void Tangram::update(float _posLerp, float _rotLerp, float _camLerp){
 
         if (bDebug)
             limbs[i].bDebug = true;
-        
+    
         limbs[i].update( _posLerp,  _rotLerp);
+        
+        if (limbs[i].getDistanceToTarget() > _wakeUpDist)
+            break;
     }
     
     scale = ofLerp(scale, targetScale, _camLerp);

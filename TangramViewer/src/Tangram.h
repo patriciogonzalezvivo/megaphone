@@ -28,7 +28,7 @@ public:
     
     void        rotateY(float _angle);
     
-    void        update(float _posLerp, float _rotLerp, float _camLerp);
+    void        update(float _posLerp, float _rotLerp, float _camLerp, int _wakeUpDist);
     void        draw();
     
     bool        bDebug;

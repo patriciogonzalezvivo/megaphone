@@ -18,6 +18,8 @@ public:
     void    makeNumber( int _num, float _scale = 100 );
     void    makeFromLimb(int _limbNum, Glyph &_glyph );
     
+    float   getDistanceToTarget();
+    
     void    flipH();
     void    flipV();
     void    turnLeft();
