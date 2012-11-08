@@ -47,10 +47,11 @@ public:
     void    update(float _posLerp, float _rotLerp);
     void    draw();
     
-    bool    bDebug;
-    
     Data    actual;
     Data    target;
+    
+    bool    *bTrail;
+    bool    bDebug;
     
 private:
     vector<Data>    trail;

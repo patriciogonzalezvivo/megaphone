@@ -16,6 +16,7 @@ Shape::Shape(){
     target.rot.set(0.0,0.0,0.0);
     
     bDebug = NULL;
+    bTrail = NULL;
 }
 
 void Shape::update(float _posLerp, float _rotLerp){
@@ -37,9 +38,13 @@ void Shape::update(float _posLerp, float _rotLerp){
     actual.pos += vel;
     acc *= 0;
     
-    trail.push_back(actual);
-    while(trail.size() > 10){
-        trail.erase(trail.begin());
+    if (bTrail != NULL){
+        if (*bTrail){
+            trail.push_back(actual);
+            while(trail.size() > 10){
+                trail.erase(trail.begin());
+            }
+        }
     }
 }
 
@@ -52,24 +57,27 @@ void Shape::draw(){
         mesh.addVertex(getVertices()[i]);
     }
     
-    
     //  Draw Trail
     //
-    for (int j = 0; j < trail.size(); j++) {
-        ofPushMatrix();
-        ofTranslate(trail[j].pos);
-        ofRotateY(trail[j].rot.y);
-        ofRotateX(trail[j].rot.x);
-        ofRotateZ(trail[j].rot.z);
-        
-        ofFill();
-        ofColor trailColor = color;
-        float pct = trailColor.getSaturation()*((float)j/(float)trail.size());
-        trailColor.setSaturation( pct );
-        trailColor.a = pct;
-        ofSetColor(trailColor);
-        mesh.draw();
-        ofPopMatrix();
+    if (bTrail != NULL){
+        if (*bTrail){
+            for (int j = 0; j < trail.size(); j++) {
+                ofPushMatrix();
+                ofTranslate(trail[j].pos);
+                ofRotateY(trail[j].rot.y);
+                ofRotateX(trail[j].rot.x);
+                ofRotateZ(trail[j].rot.z);
+                
+                ofFill();
+                ofColor trailColor = color;
+                float pct = trailColor.getSaturation()*((float)j/(float)trail.size());
+                //            trailColor.setSaturation( pct );
+                trailColor.a = pct;
+                ofSetColor(trailColor);
+                mesh.draw();
+                ofPopMatrix();
+            }
+        }
     }
     
     
@@ -101,6 +109,7 @@ void Shape::draw(){
         ofRotateZ(target.rot.z);
         
         ofEnableSmoothing();
+//        mesh.drawWireframe();
         ofNoFill();
         ofBeginShape();
         for (int i = 0; i < getVertices().size(); i++) {
