@@ -7,8 +7,6 @@ void testApp::setup()
     ofSetVerticalSync(true);
     ofBackground(0);
 
-    bShowAll = true;
-
     camera.disableMouseInput();
     camera.tilt(-30);
     camera.rotate(20, 0, 1, 0);
@@ -22,13 +20,47 @@ void testApp::setup()
     targetCameraMatrix = longShotCameraMatrix;
     camera.setTransformMatrix(targetCameraMatrix);
 
-    addRainPages(1);
+    ofSetSmoothLighting(true);
+    pointLight.setPosition(0, groundSize, 0);
+    pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
+	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
 
-    gui.setup("Controls");
+	material.setShininess(64);
+	material.setSpecularColor(ofFloatColor(1.0, 1.0, 1.0));
+
+    // build the ground
+    ofVec3f vertices[] = {
+        ofPoint(-groundSize, 0, -groundSize),
+        ofPoint(-groundSize, 0,  groundSize),
+        ofPoint( groundSize, 0,  groundSize),
+        ofPoint( groundSize, 0, -groundSize)
+    };
+    ofVec3f normals[] = {
+        ofPoint(0, 1, 0),
+        ofPoint(0, 1, 0),
+        ofPoint(0, 1, 0),
+        ofPoint(0, 1, 0)
+    };
+    ofIndexType indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+    groundMesh.addVertices(vertices, 4);
+    groundMesh.addNormals(normals, 4);
+    groundMesh.addIndices(indices, 6);
+
+    addPages(1);
+
+    gui.setup("Controls", "settings/paperSettings.xml");
     gui.add(drawGroundToggle.setup("draw ground", true));
     gui.add(fillGroundToggle.setup("fill ground", true));
     gui.add(drawAxesToggle.setup("draw axes", false));
     gui.add(maskToggle.setup("mask", false));
+    gui.add(spacerLabel.setup("spacer", ""));
+    gui.add(enableLightToggle.setup("enable light", true));
+    gui.add(drawLightToggle.setup("draw light", false));
+    gui.add(lightPos.setup("light pos", 1, 0, 1));
+    gui.add(debugMesh.setup("debug mesh", false));
     gui.add(spacerLabel.setup("spacer", ""));
     gui.add(offsetAmountTarget.setup("offset", 0, 0, 1));
     gui.add(spacerLabel.setup("spacer", ""));
@@ -65,6 +97,8 @@ void testApp::setup()
     addTenButton.addListener(this, &testApp::addTenButtonPressed);
     clearButton.addListener(this, &testApp::clearButtonPressed);
     addToggleListeners();
+
+    gui.loadFromFile("settings/paperSettings.xml");
 }
 
 //--------------------------------------------------------------
@@ -84,14 +118,14 @@ void testApp::removeToggleListeners()
 }
 
 //--------------------------------------------------------------
-void testApp::addRainPages(int num)
+void testApp::addPages(int num)
 {
     for (int i = 0; i < num; i++) {
         Page *page = new Page();
         page->path.setFillColor(ofColor(255));
         page->rainSpeed.set(ofRandom(-2, -5), -1 * ofRandom(2, 10), ofRandom(10));
 
-        rainPages.push_back(page);
+        pages.push_back(page);
     }
 }
 
@@ -143,8 +177,10 @@ void testApp::update()
         camera.setTransformMatrix(newCameraTransform);
     }
 
-    for (int i = 0; i < rainPages.size(); i++) {
-        rainPages[i]->update();
+    pointLight.setPosition(0, groundSize * lightPos * 10, 0);
+
+    for (int i = 0; i < pages.size(); i++) {
+        pages[i]->update();
     }
 }
 
@@ -156,32 +192,35 @@ void testApp::draw()
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
-    if (drawGroundToggle) {
-        ofPushStyle();
-        
-        if (fillGroundToggle) ofFill();
-        else ofNoFill();
-        
-        // draw the ground
-        ofSetColor(128);
-        ofBeginShape();
-        ofVertex(-groundSize, 0, -groundSize);
-        ofVertex(-groundSize, 0, groundSize);
-        ofVertex(groundSize, 0, groundSize);
-        ofVertex(groundSize, 0, -groundSize);
-        ofEndShape(true);
-
-        ofPopStyle();
+    if (drawLightToggle) {
+        ofSetColor(pointLight.getDiffuseColor());
+        ofSphere(pointLight.getPosition(), 10.f);
     }
+
+    if (enableLightToggle) {
+        ofEnableLighting();
+        pointLight.enable();
+        material.begin();
+        
+        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
+    }
+
+    if (drawGroundToggle) {
+        ofSetColor(128);
+        if (fillGroundToggle) groundMesh.draw();
+        else groundMesh.drawWireframe();
+    }
+
+    ofSetColor(255);
 
     // draw the pages
-    if (bShowAll) {
-        for (int i = 0; i < rainPages.size(); i++) {
-            rainPages[i]->draw();
-        }
+    for (int i = 0; i < pages.size(); i++) {
+        pages[i]->draw();
     }
-    else if (rainPages.size() > 0) {
-        rainPages[0]->draw();
+
+    if (enableLightToggle) {
+        material.end();
+        ofDisableLighting();
     }
 
     if (drawAxesToggle) {
@@ -216,10 +255,11 @@ void testApp::draw()
         ofPopStyle();
     }
 
-    // draw the controls
     glDisable(GL_DEPTH_TEST);
-    gui.draw();
 
+    // draw the controls
+    ofSetColor(255);
+    gui.draw();
     ofDrawBitmapString(ofToString(ofGetFrameRate(), 2) + " fps", ofGetWidth() - 50, ofGetHeight() - 10);
 }
 
@@ -301,23 +341,23 @@ void testApp::snapLongShotPressed(bool& pressed)
 //--------------------------------------------------------------
 void testApp::addOneButtonPressed(bool& pressed)
 {
-    if (pressed) addRainPages(1);
+    if (pressed) addPages(1);
 }
 
 //--------------------------------------------------------------
 void testApp::addTenButtonPressed(bool& pressed)
 {
-    if (pressed) addRainPages(10);
+    if (pressed) addPages(10);
 }
 
 //--------------------------------------------------------------
 void testApp::clearButtonPressed(bool& pressed)
 {
     if (pressed) {
-        for (int i = 0; i < rainPages.size(); i++) {
-            delete rainPages[i];
+        for (int i = 0; i < pages.size(); i++) {
+            delete pages[i];
         }
-        rainPages.clear();
+        pages.clear();
     }
 }
 

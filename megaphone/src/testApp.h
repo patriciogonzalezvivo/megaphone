@@ -2,8 +2,22 @@
 
 #include "ofMain.h"
 #include "audioManager.h"
+#include "baseScene.h"
+#include "typeScene.h"
+#include "audioSampleLoader.h"
+#include "ofxProjectorBlend.h"
+#include "mtl2dMapping.h"
+#include "ControlsMapping.h"
+#include "tanagramScene.h"
 
-#include "angleLengthLine.h"
+
+#define PIXEL_OVERLAP 30
+#define PROJECTOR_COUNT 2
+#define PROJECTOR_WIDTH 1024
+#define PROJECTOR_HEIGHT 768
+
+
+
 
 class testApp : public ofBaseApp{
 
@@ -21,30 +35,37 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+        void exit();
     
+        void audioOut(float * output, int bufferSize, int nChannels); 
         void audioIn(float * input, int bufferSize, int nChannels); 
         float * left;
         float * right;
         
         ofSoundStream soundStream;
         audioManager AM;
+        bool bDrawAudioManager;
     
     
-     
+        int nBuffersRecorded;
+        float * audioDataThread;
+        float * audioDataMainThread;
     
-    float pitch;
-    float volume;
-    bool bLoudEnough;
-    float pitchSmooth;      // non aubio needs some love -- works well w/ whisteling. 
-    
-    
-    vector < float > angleDiffs;
-    vector < float > distances;
-    ofPolyline total;
-    float angle;
-    float angleSmooth;
-    ofPoint catchPoint;
+        ofMutex mutex;
+        vector < baseScene *  > scenes;
+        audioSampleLoader ASL;
     
     
+        // rendering things: 
+        ofxProjectorBlend blender;
+        mtl2dMapping* _mapping;
+    
+        //bool bDrawForProjector
+        
+        ofTexture grabScreen;
+    
+    
+        ofFbo blah;
+    
+
 };
