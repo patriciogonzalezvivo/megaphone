@@ -40,9 +40,6 @@ void Tangram::update(float _posLerp, float _rotLerp, float _camLerp, int _wakeUp
         
         limbs[i]->update( _posLerp,  _rotLerp);			
 		
-		
-		
-        
         if (limbs[i]->getDistanceToTarget() > _wakeUpDist)
             break;
     }

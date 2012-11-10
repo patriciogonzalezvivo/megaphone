@@ -57,13 +57,10 @@ public:
 	int nTrailLines;
 	vector < ofPolyline > trailLines;
 	
-	
-	
 	float lockedAmount;  // if I'm not locked, I'm crazy!
 	
 	float noiseSeedA;
 	float noiseSeedB;
-	
     
 private:
     vector<Data>    trail;

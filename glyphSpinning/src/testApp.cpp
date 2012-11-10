@@ -19,7 +19,7 @@ void testApp::setup(){
     glyph = new Glyph();
     glyph->setScale(100);
     superGlyph.createFromGlyph( glyph );
-    
+
     bDebug = true;
 }
 

@@ -7,7 +7,7 @@
     <min>0.000000000</min>
     <max>0.100000001</max>
 </mic>
-<position_amount>0.100000001</position_amount>
-<rotation_amount>0.097000003</rotation_amount>
-<camera_amount>0.100000001</camera_amount>
-<wakeUpDist>500</wakeUpDist>
+<position_amount>0.080499999</position_amount>
+<rotation_amount>0.077000000</rotation_amount>
+<camera_amount>0.077000000</camera_amount>
+<wakeUpDist>403</wakeUpDist>

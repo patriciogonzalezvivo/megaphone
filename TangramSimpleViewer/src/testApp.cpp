@@ -122,8 +122,8 @@ void testApp::keyPressed(int key){
 //        tangram.createFromGlyph( glyph );
         
         tangram.load( "tangramShape/" + dataDir.getFile(selectedFile).getFileName() );
-        //tangramAngle = ofRandom(360);
-        //tangram.rotateY(tangramAngle);
+        tangramAngle = ofRandom(360);
+        tangram.rotateY(tangramAngle);
         //tangram.addCentralRepulsionForce(1.0);
         
         dataDir.listDir("tangramShape");

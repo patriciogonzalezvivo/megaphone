@@ -1,0 +1,34 @@
+{  
+    "folders":  
+    [  
+        {  
+            "path": "/Users/Patricio/Desktop/openFrameworks/myApps/megaphone/TangramViewer"  
+        }  
+    ],  
+    "settings":  
+    {  
+        "sublimeclang_enable_fast_completions": true,  
+//      "add_language_option": true,  
+//      "additional_language_options":  
+//            {  
+//                  // For example, you can use "c++": ["-std=c++11"] to enable C++11 features.  
+//                  "c++" : ["-std=c++11"],  
+//                  "c": [],  
+//                  "objc": [],  
+//                  "objc++": []  
+//              },  
+        "sublimeclang_options":  
+        [  
+            "-Isystem",  
+            "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include/",  
+            "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include/c++/4.2.1/",  
+            "-Wno-deprecated-declarations",  
+            "-F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks",  
+            "-I/Users/Patricio/Desktop/openFrameworks/libs/**",
+            "-I/${project_path}/../../../libs/openFrameworks/**",
+            "-I/${project_path}/../../../libs/openFrameworks/addons/ofxGui/**",  
+            "-I/${project_path}/../../../libs/openFrameworks/addons/ofxXmlSettings/**",
+            "-I/${project_path}/src/**"
+        ]  
+    }  
+} 
