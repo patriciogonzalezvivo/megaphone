@@ -7,6 +7,14 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "src/testApp.cpp",
+			"settings":
+			{
+				"buffer_size": 4970,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/User/oF.sublime-build",
 	"command_palette":
@@ -125,8 +133,37 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/testApp.cpp",
+					"settings":
+					{
+						"buffer_size": 4970,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								465,
+								465
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
