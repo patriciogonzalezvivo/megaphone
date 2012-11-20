@@ -37,6 +37,7 @@ public:
     
     //  Terrain
     //
+    ofLight         light;
     Terrain         terrain;
     
     //  Camera

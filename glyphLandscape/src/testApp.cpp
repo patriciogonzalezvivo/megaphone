@@ -30,9 +30,10 @@ void testApp::setup(){
     terrain.topAltitud  = 300;
     
     cameraFocus.pos = glyph.getPathPositionAt(0.0);
-    light.setPosition(ofVec3f(-glyph.width*0.5,0,1000));
+    light.setPosition(ofVec3f(0,0,300));
+//    light.rotate(54, ofVec3f(1,0,0.0));
 //    light.setDiffuseColor(ofColor(255));
-//    light.setAmbientColor(ofColor(50));
+//    light.setAmbientColor(ofColor(50,21,33));
 }
 
 
@@ -93,13 +94,13 @@ void testApp::draw(){
     //glyph.draw();
     //ofTranslate(0, 0,-1);
     ofSetColor(255);
-//    light.enable();
+    light.enable();
     terrain.draw();
-//    light.disable();
+    light.disable();
     
     
-    ofSetColor(0,50);
-    terrain.mesh.drawWireframe();
+//    ofSetColor(0,50);
+//    terrain.mesh.drawWireframe();
     
     ofPopMatrix();
     

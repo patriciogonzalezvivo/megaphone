@@ -93,8 +93,8 @@ void Terrain::update(){
                 
                 //  Normals by vert
                 pNormals[nIndex].x = norms.getColor((int)flX, (int)flY).r;
-                pNormals[nIndex].y = norms.getColor((int)flX, (int)flY).b;
-                pNormals[nIndex].z = norms.getColor((int)flX, (int)flY).g;
+                pNormals[nIndex].y = norms.getColor((int)flX, (int)flY).g;
+                pNormals[nIndex].z = norms.getColor((int)flX, (int)flY).b;
                 
                 pTexCoords[nIndex].x = flX;// * textureScale;// / width;
                 pTexCoords[nIndex].y = flY;// * textureScale;// / height;

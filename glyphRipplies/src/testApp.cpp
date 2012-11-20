@@ -29,6 +29,8 @@ void testApp::setup(){
     terrain.resolution  = 5;
     terrain.topAltitud  = 300;
     
+    light.setGlobalPosition(0, 0, 100);
+    
     cameraFocus.pos.set(0,0);
 }
 
@@ -89,9 +91,11 @@ void testApp::draw(){
     
     //glyph.draw();
     //ofTranslate(0, 0,-1);
+    
+    //light.enable();
     ofSetColor(255);
     terrain.draw();
-    
+    //light.disable();
     
     ofSetColor(0,50);
     terrain.mesh.drawWireframe();

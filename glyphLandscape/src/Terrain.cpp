@@ -95,8 +95,8 @@ void Terrain::update(){
                 
                 //  Normals by vert
                 pNormals[nIndex].x = norms.getColor((int)flX, (int)flY).r;
-                pNormals[nIndex].y = norms.getColor((int)flX, (int)flY).b;
-                pNormals[nIndex].z = norms.getColor((int)flX, (int)flY).g;
+                pNormals[nIndex].y = norms.getColor((int)flX, (int)flY).g;
+                pNormals[nIndex].z = norms.getColor((int)flX, (int)flY).b;
                 
                 pTexCoords[nIndex].x = flX;// * textureScale;// / width;
                 pTexCoords[nIndex].y = flY;// * textureScale;// / height;
@@ -114,7 +114,7 @@ void Terrain::update(){
     mesh.addTexCoords(pTexCoords, nVertexCount);
     mesh.addVertices(pVertices, nVertexCount);
     mesh.addNormals(pNormals, nVertexCount);
-    //mesh.addColors(pColors, nVertexCount);
+    mesh.addColors(pColors, nVertexCount);
     
     delete [] pVertices; pVertices = NULL;
     delete [] pTexCoords; pTexCoords = NULL;
@@ -125,22 +125,21 @@ void Terrain::update(){
 void Terrain::draw(){
     
     ofPushStyle();
-    
-    glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
-    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_2D);
     ofPushMatrix();
     
     ofSetColor(255);
     ofEnableAlphaBlending();
     
-    colorFbo.getTextureReference().bind();
+//    colorFbo.getTextureReference().bind();
     mesh.draw();
-    colorFbo.getTextureReference().unbind();
+//    colorFbo.getTextureReference().unbind();
     
     ofPopMatrix();
     
-    glDisable(GL_TEXTURE_2D);
+//    glDisable(GL_TEXTURE_2D);
     glDisable(GL_NORMALIZE);
     glDisable(GL_DEPTH_TEST);
     
